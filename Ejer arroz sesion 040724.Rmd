@@ -1,0 +1,67 @@
+---
+title: "Analisis del precio del arroz en Mexico"
+output: html_document
+date: "2024-07-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# se carga la libreria openxlsx
+library(openxlsx)
+library(DT)
+#Se carga la libreria de analisis de datos dplyr
+library(dplyr)
+```
+
+#Introduccion
+
+En este documento se realizara un analisis estadistico y grafico del precio del arroz cultivado y corcializado en las principales centrales de abastos de México
+
+```{r importaDatosArroz, message=FALSE, warning=FALSE}
+
+Datos=read.xlsx("datosArroz.xlsx")
+Datos$Fecha=as.Date(Datos$Fecha,origin="1899-12-30")
+#Se presentan los datos importados con la funcion datatable que es para paginas web 
+datatable(Datos)
+```
+
+Con los datos anteriores, nos interesa saber cuales Estados se encientran registrados en la base de datos Datos. Para esto, debemos vonvertir la columna origende ser unobjeto tipo charactaer a un objeto tipo factor.Este ultipo tipo de objeto es util para realizar analisis estadisticos y graficos y encontrar factores o clase (grupos, Estados).
+
+```{r}
+# Convertimos a objeto tipo factor los datos de la columna Origen
+Datos$Origen=factor(Datos$Origen)
+
+#Imprimimos los "niveles de factores de (lease Estados) que hay registrados:
+levels(Datos$Origen)
+
+```
+En nuestro analisis nos interesa solamente los datos del Estado de Michoacan. Para ello generaremos un objeto llamado datosMichoacan que contendra solamente los datos del Estado de Michoacan.
+
+```{r}
+# Seleccionamos los datos del EStado de Michoacán. Para el condicional se usa dos veces igual "=="
+datosMichoacan=subset(Datos,Origen=="Michoacán")
+# Imprimo la tabla correspondiente
+datatable(datosMichoacan)
+```
+
+```{r}
+# Seleccionamos los datos del Estado de Michoacan con la funcion filter de dplyr:
+datosMichoacan2=Datos %>% filter(Origen=="Michoacán")
+```
+
+Ahora nos interesa firtrar de manera conjunta, los datos del estado de Michoacán y la central de abastos de Morelia (Destino=="Mercado de Abasto de Morelia")
+
+```{r}
+datosMichoacan3=Datos %>% filter(Origen=="Michoacán") %>% filter(Destino=="Michoacán: Mercado de Abasto de Morelia")
+datatable(datosMichoacan3)
+```
+
+Ahora, nos interesa saber cual es el precio promedio del arroz en Mexico por fecha. Para ello, utilizamos la funcion group_by de dplyr con la funcion summarise
+
+```{r}
+# Generamos la tabla de datos de precios promedio por fecha:
+preciosPromedio=Datos %>% group_by(Fecha) %>% summarize(precioPromedio = mean(Precio.Frecuente))
+# mean es promedio y sd es la desviacion estandar, max maximo y min minimo
+datatable(preciosPromedio)
+```
+

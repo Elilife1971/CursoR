@@ -1,0 +1,22 @@
+---
+title: "Analisis del precio del arroz en México"
+author: "Ivett Pascual Rivera"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# se carga la libreria openxlsx
+library(openxlsx)
+library(DT)
+```
+
+#Introduccion
+En este documento se realizara un analisis estadistico y grafico del precio del arroz cultivado y corcializado en las principales centrales de abastos de México. 
+
+```{r importaDatosArroz}
+# Con la libreria cargada, se importan los datos de los precios del arroz
+Datos=read.xlsx("datosArroz.xlsx")
+Datos
+```

@@ -1,0 +1,183 @@
+---
+title: "Mi primer pagina web"
+author: "Ivett Pascual Rivera"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+```
+
+# Introduccion
+En estas notas en linea vamos a ilustrar algunos calculos simples y creaciones de objetos, esto para ilustrar el empleo de archivos *.RMD o Rmarkdown.
+
+# Creacion de objetos de todos tipos
+# Se usan ** para poner texto en negritas y un * para poner texto en cursiva.
+En esta seccion creamos varios tipos de objetos de R de interes. **Estos objetos son de los principales pero existen mas tipos de objetos**. Esto quieres decir que podemos investigar *al gusto* los otros objetos. Comencemos.
+**Nota:** El como hacer este tipo de pagias web lo puede consultar en [el sito web de google](www.google.com).
+
+Comenzamos con un vector de numeros:
+# El area gris la inserte con ctrl+alt+i
+```{r message=FALSE, warning=FALSE}
+# Creamos un vector de puros numeros al gusto:
+mivector2=c(1,7,6,15,pi,pi*2)
+# Imprimo en pantalla los valores del objeto miVector2
+mivector2
+```
+
+# Creacion de objetos tipo data.frame o tabla de datos
+En el siguiente fragmento de codigo creamos una tabla de datos de 10 fechas teoricas con 10 observaciones de una variable aleatoria ($x_i$) gaussianemente distribuida con media de cero y desviacion estandar de 1:
+
+#Con doble $ escribimos fuera de un texto una formula, como abajo, y con un solo $ dentro del texto
+
+$$x_i=N(x_i,\mu,\sigma)$$
+**Nota:** Para concoer como escribir una ecuacion con Latex como las anteriores [puede consultar esta liga](http://en.wikibooks.org/wili/Latex/mathematics)
+
+
+```{r}
+secuenciaFechas=seq(from=as.Date("2024-07-01"),to=as.Date("2024-07-10"),by=1)
+vectorAleatorio=rnorm(10,mean=0,sd=1)
+fecha1=as.Date("2024-07-01")
+tablaDatos2=data.frame(Fecha=fecha1,Valores=vectorAleatorio)
+tablaDatos2
+```
+
+# Importacion de datos de fuentes externas
+
+A continuacion se revisara como importar datos de fuentes externas como es INEGI, Banxico, Banco Mundial, archivos de Excel u otras fuentes.
+
+#Importacion de datos de tablas de excel
+
+Comenzamos importando un archivo de Excel con los historicos de los precios del arroz (de todos los tipos producidos en Mèxico) registrados en diferentes centrales de abastos en el pais. Para esto requeriremos una libreria llamada openXlsx
+
+Para instalar esta libreria necesitamos ejecutar el comando o funcion install.packages ("openxlsx")
+
+#eval=FALSE es para que no se este reinstalando constantemente el archivo
+```{r InstalaOpenxlsx, eval=FALSE}
+install.packages("openxlsx")
+```
+
+Una vez instalada, siempre que queramos utilizar la libreria enun nuevo archivo, invocamos la libreria con la funcion library(openxlsx)
+
+```{r importaDatosArroz}
+# Se carga la libreria openxlsx
+library(openxlsx)
+# Con la libreria cargada, se importan los datos de los precios del arroz con read.xlsx, el archivo se pone entre comillas porque es un archivo tipo caracter.
+Datos=read.xlsx("datosArroz.xlsx")
+```
+
+# Indizacion de objetos que consiste en extraer valores de columnas
+
+La indizacion nos srive para poder extraer una parte de los valores guardados en un objeto de cualquier tipo. La indizacion puede ser ampliamente utilizada en vectores o matrices tipo numerico (double) o tipo caracter. La indizacion tambien sera muy util para extraer o modificar valores en objetos de los tipos anteriores y en objetos data.frame.
+
+Por ejemplo, si queremos extraer la quinta fila del objeto miVector2, la instruccion seria la siguiente:
+
+```{r IndiceVector1}
+mivector2[5]
+```
+Incluso, podemos guardar el valor en un objeto nuevo:
+
+```{r indiceVector2}
+valorPI=mivector2[5]
+```
+
+Tambien podemos indizar o extraer un rango de filas o columnas a nuestro gusto:
+
+```{r}
+mivector2[2:4]
+```
+
+Tambien podemos indizar filas o columnas a nuestro gusto creando en lugar de x:y con la secuencia de filas, unvector con los numeros de filas a nuetro gusto: c(fila1, fila2, fila3,...)
+
+```{r}
+mivector2[c(5,6,1,4,5,3,2,6)]
+```
+
+En el caso de objetos data.frame (tabla de datos) tambien podemos indizar por filas y columnas. Por ejemplo, queremos extraer las 3 pirmeras filas de la columna 2 del objeto tablaDatos2:
+
+```{r}
+tablaDatos2[1:3,2]
+```
+
+Si quiero extraer de manera arbitraria las filas y columnas, tambien podemos hacerlo:
+
+```{r}
+tablaDatos2[c(2,5,3,1),c(2,1)]
+```
+Tambien podemos seleccionar un rango de filas y columnas en secuencia. Por ejemplo, podemos extraer las filas 5 a 10 y columnas 2 a 5 del objeto Datos
+
+```{r}
+Datos[5:10,2:5]
+```
+
+# Trucos adicionales de indizacion.
+
+Supongamos que una tabla de datos de entrada tiene columnas y numeros de filas cambiantes y queremos siempre estar importando un rango de filas y/o columnas que terminen con la ultima de estas. Para ello nos auxiliaremos de dos funciones:
+
+- la funcion ncol() que determna el numero de columnas en un objeto data.frame o matrix.
+- la funcion ncol() que determna el numero de filas en un objeto data.frame o matrix.
+
+Por ejemplo quiero extraer de la fila 2 a la ultima (cualquiera que sea esta) las filas 5 a 10 en el objeto Datos:
+
+```{r}
+# Da la cantidad de columnas y filas de una tabla
+ncol(Datos)
+nrow(Datos)
+```
+
+
+```{r}
+Datos[5:10,2:ncol(Datos)]
+```
+
+Si deseamos extraer todas las filas de una columna o columnas, simplemente dejamos sin escribir los numeros de filas. Por ejemplo, indizamos todas las filas de la columna 2 del objetotablaDatos2
+
+```{r}
+tablaDatos2[,2]
+```
+
+Lo mismo sucede si queremos todas las columnas de la fila 27 del objeto Datos2
+
+```{r}
+Datos[27,]
+```
+Todos estos indizados o friltrados los podemos guardar en un objeto a nuestro gusto:
+
+```{r}
+objetoAlGusto=Datos[27,]
+```
+
+# Determanr filas o columnas con condicionales
+
+Para esto, nos apoyaremos del comando which(). Por ejemplo queremos filtrar o indizar las filas del objeto tablaDatos2 que tengan valores positivos y guardar el resultado en un objeto nuevo:
+
+```{r}
+# Con la funcion which, creo un vector en donde se especifiquen las filas con datos positivos en la columna 2 de tablaDatos2:
+
+filasPositivas=which(tablaDatos2[,2]>0)
+
+# Ahora generamos un objeto llamado tablaDatos2Positivo que simplemente es el objeto tablaDatos2 filtrado con valores positivos en la segunda columna:
+
+tablaDatos2Positivo=tablaDatos2[filasPositivas,]
+tablaDatos2Positivo
+```
+
+# Indizacion de objetos data.frame por el nombre de columna
+
+Tambien podemos filtrar o indizar un objeto data.frame con el nombre de la columna, por ejemplo, extraigo todos los valores de la columna origen del objeto tablaDatos2:
+
+```{r}
+Datos$Origen[3:10]
+```
+# Cambiando el tipo o contenido de partes de un objeto
+
+En esta seccion aprenderemos como modificar partes como columnas de un objeto data.frame (sin que sea exclusivo de este tipo de objeto) con operaciones sencillas. Como ejemplo cambiaremos la columna fecha del objeto Datos para que deje de ser una secuencia de numeros de fecha de Excel y se convierta en un objeto tipo Date con funcion as.Date()
+```{r}
+# Convertimos la columna fecha que tiene un origen de Excel el 30 de diciembre de 1989 para que quede la fecha correcta y para estousamos origin
+
+Datos$Fecha=as.Date(Datos$Fecha,origin="1899-12-30")
+```
+
+
+
+
